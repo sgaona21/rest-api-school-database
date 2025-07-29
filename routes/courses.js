@@ -2,6 +2,7 @@
 
 const express = require('express');
 const { asyncHandler } = require('../middleware/async-handler');
+const { authenticateUser } = require('../middleware/authorize');
 const { Course } = require('../models');
 
 const router = express.Router();
@@ -18,7 +19,7 @@ router.get('/:id', asyncHandler(async (req, res) => {
     res.status(200).json(course);
 }));
 
-router.post('/', asyncHandler(async (req, res) => {
+router.post('/', authenticateUser, asyncHandler(async (req, res) => {
   try {
     await Course.create(req.body);
     res.location('/');
@@ -33,7 +34,7 @@ router.post('/', asyncHandler(async (req, res) => {
   }
 }));
 
-router.put('/:id', asyncHandler(async (req, res) => {
+router.put('/:id', authenticateUser, asyncHandler(async (req, res) => {
   try {
     const course = await Course.findByPk(req.params.id);
 
@@ -49,7 +50,7 @@ router.put('/:id', asyncHandler(async (req, res) => {
   }
 }));
 
-router.delete('/:id', asyncHandler(async (req, res) => {
+router.delete('/:id', authenticateUser, asyncHandler(async (req, res) => {
   try {
     const course = await Course.findByPk(req.params.id);
 
