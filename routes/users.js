@@ -4,15 +4,14 @@ const express = require('express');
 const { asyncHandler } = require('../middleware/async-handler');
 const { authenticateUser } = require('../middleware/authorize');
 const { User } = require('../models');
-
 const bcrypt = require('bcryptjs');
-
 const router = express.Router();
 
+// GET a user from the db
 router.get('/', authenticateUser, asyncHandler(async (req, res) => {
   const user = req.currentUser;
 
-  res.json({
+  res.status(200).json({
     id: user.id,
     name: user.firstName,
     lastName: user.lastName,
@@ -20,7 +19,7 @@ router.get('/', authenticateUser, asyncHandler(async (req, res) => {
   });
 }));
 
-
+// CREATE a new user 
 router.post('/', asyncHandler(async (req, res) => {
   try {
     const user = req.body;
@@ -29,7 +28,6 @@ router.post('/', asyncHandler(async (req, res) => {
       user.password = await bcrypt.hash(user.password, 10);
     }
     await User.create(user);
-
     res.location('/');
     res.status(201).json({ "message": "Account successfully created!" });
   } catch (error) {
