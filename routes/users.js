@@ -21,7 +21,13 @@ router.get('/', authenticateUser, asyncHandler(async (req, res) => {
 
 router.post('/', asyncHandler(async (req, res) => {
   try {
-    await User.create(req.body);
+    const user = req.body;
+
+    if (user.password) {
+      user.password = await bcrypt.hash(user.password, 10);
+    }
+    await User.create(user);
+    
     res.location('/');
     res.status(201).json({ "message": "Account successfully created!" });
   } catch (error) {
