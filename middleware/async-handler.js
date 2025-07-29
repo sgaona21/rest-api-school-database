@@ -1,4 +1,5 @@
-// helper async function to wrap each route
+// helper function to wrap each route
+
 exports.asyncHandler = (cb) => {
   return async (req, res, next) => {
     try {
