@@ -11,6 +11,7 @@ const router = express.Router();
 // GET ALL courses
 router.get('/', asyncHandler(async (req, res) => {
     const courses = await Course.findAll({
+      attributes: ['id', 'title', 'description', 'estimatedTime', 'materialsNeeded'],
       include: [{
         model: User,
         attributes: ['id', 'firstName', 'lastName', 'emailAddress']
@@ -23,6 +24,7 @@ router.get('/', asyncHandler(async (req, res) => {
 // GET a specific course by course id
 router.get('/:id', asyncHandler(async (req, res) => {
     const course = await Course.findByPk(req.params.id, {
+      attributes: ['id', 'title', 'description', 'estimatedTime', 'materialsNeeded'],
       include: [{
         model: User,
         attributes: ['id', 'firstName', 'lastName', 'emailAddress']
@@ -39,8 +41,8 @@ router.get('/:id', asyncHandler(async (req, res) => {
 // CREATE a course 
 router.post('/', authenticateUser, asyncHandler(async (req, res) => {
   try {
-    await Course.create(req.body);
-    res.location('/');
+    const course = await Course.create(req.body);
+    res.location(`/api/courses/${course.id}`);
     res.status(201).end();
   } catch (error) {
     if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
